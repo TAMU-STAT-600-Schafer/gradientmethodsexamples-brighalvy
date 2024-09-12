@@ -18,9 +18,9 @@ NewtonsMethod <- function(f, fprime, fdoubleprime, x0, nIter){
     # At each iteration, update current value of x and save the new function value
     # [ToDo] fill in
     # Newton's method update
-
+    xvec[i + 1] <- xvec[i] - (fprime(xvec[i])/fdoubleprime(xvec[i]))
     # Function value
-
+    fvec[i + 1] <- f(xvec[i + 1])
   }
   
   # Return the vector of x values, as well as the vector of function values across iterations, including the starting point (both length nIter + 1)
