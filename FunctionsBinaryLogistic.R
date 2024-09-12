@@ -7,7 +7,8 @@
 # obj - scalar value of objective function at inputs
 logistic_objective <- function(beta, X, y){
   # [ToDo] Compute value of objective function for binary logistic regression using current value of X, y and beta
-  
+  Xbeta <- X%*%beta
+  sum(-y * (Xbeta) + log(1 + exp(Xbeta)))
 }
 
 # Gradient calculation for binary logistic regression
@@ -19,7 +20,9 @@ logistic_objective <- function(beta, X, y){
 # gradient - scalar value of gradient at inputs
 logistic_gradient <- function(beta, X, y){
   # [ToDo] Compute gradient for binary logistic regression problem using current values of X, y and beta
-  
+  ExpXbeta <- exp(X%*%beta)
+  p_Xbeta <- ExpXbeta/(1 + ExpXbeta)
+  crossprod(X, p_Xbeta - y)
 }
 
 # Calculation for gradient and objective at once
@@ -48,22 +51,22 @@ logistic_both <- function(beta, X, y){
 # fvec - vector of length (nIter+1) storing the objective function for each row of beta_mat
 SteepestDescentBinLogistic <- function(X, y, beta_init, alpha, nIter){
   # [ToDo] Initialize storage for iterations and function values
-  
+  p <- length(beta_init)
+  beta_mat <- matrix(beta_init, nIter + 1, p, byrow = T)
+  fvec <- vector(mode = "numeric", lenght = nIter + 1)
   # Calculate current objective value
-  
+  fvec[1] <- logistic_objective(beta_init, X, y)
   # Perform steepest descent update for nIter iterations
   for (i in 1:nIter){
     # At each iteration
     # Calculate gradient value and update x
-    
+    beta_mat[i + 1, ] <- beta_mat[i, ] - alpha*logistic_gradient(beta_mat[i, ], X, y)
     # Update the objective
-    
-    # Update pbeta for next round
-    
+    fvec[i + 1] <- logistic_objective(beta_mat[i + 1, ], X, y)
   }
   
-  # Return the matrix of betea values, as well as the vector of function values across iterations, including the starting point (both have nIter + 1 elements, for x put them in columns)
-  
+  # Return the matrix of beta values, as well as the vector of function values across iterations, including the starting point (both have nIter + 1 elements, for x put them in columns)
+  return(list(beta_mat = beta_mat, fvec = fvec))
 }
 
 # Write down customized solver of Newton's method on binary logistic to avoid recalculating extra things
@@ -80,24 +83,34 @@ SteepestDescentBinLogistic <- function(X, y, beta_init, alpha, nIter){
 NewtonBinLogistic <- function(X, y, beta_init, nIter, eta = 1, lambda = 0){
   
   # [ToDo] Initialize storage for iterations and function values
+  p <- length(beta_init)
+  beta_mat <- matrix(beta_init, nIter + 1, p, byrow = T)
+  fvec <- vector(mode = "numeric", lenght = nIter + 1)
   
   # Calculate current objective value
-  
-  
+  Xb <- X%*%beta_init
+  fvec[1] <- sum(-y *Xb + log(1 + Xb))
+
   # Perform steepest descent update for nIter iterations
   for (i in 1:nIter){
     # At each iteration, calculate gradient value, Hessian, update x, calculate current function value
+    # Calculate p(x; beta):
+    prob <-  1 - 1/(1 + exp(Xb))
+    # Calculate gradient:
+    gradient <- crossprod(X, prob - y)
     
     # Calculate Hessian value and update beta_mat
-    
+    w <- as.vector(prob*(1 - prob), p)
+    hessian <- crossprod(X, w * X)
+    beta_mat[i + 1, ] = beta_mat[i, ] - solve(hessian,gradient)
+    # Update Xb for next round
+    Xb <- X%*%beta_mat[i+1, ]
     # Update the objective
-    
-    # Update pbeta for next round
-    
+    fvec[i] <- sum(-y *Xb + log(1 + Xb))
   }
   
   # Return the matrix of beta values, as well as the vector of function values across iterations, including the starting point (both have nIter + 1 elements, for x put them in columns)
-  
+  return(list(beta_mat = beta_mat, fvec = fvec))
 }
 
 
