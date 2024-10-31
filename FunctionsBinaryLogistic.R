@@ -85,28 +85,29 @@ NewtonBinLogistic <- function(X, y, beta_init, nIter, eta = 1, lambda = 0){
   # [ToDo] Initialize storage for iterations and function values
   p <- length(beta_init)
   beta_mat <- matrix(beta_init, nIter + 1, p, byrow = T)
-  fvec <- vector(mode = "numeric", lenght = nIter + 1)
+  fvec <- vector(mode = "numeric", length = nIter + 1)
   
   # Calculate current objective value
   Xb <- X%*%beta_init
-  fvec[1] <- sum(-y *Xb + log(1 + Xb))
+  fvec[1] <- sum(-y * Xb + log(1 + exp(Xb)))
 
   # Perform steepest descent update for nIter iterations
   for (i in 1:nIter){
     # At each iteration, calculate gradient value, Hessian, update x, calculate current function value
     # Calculate p(x; beta):
-    prob <-  1 - 1/(1 + exp(Xb))
+    prob <- exp(Xb)
+    prob <-  prob/(1 + prob)
     # Calculate gradient:
-    gradient <- crossprod(X, prob - y)
+    gradient <- crossprod(X, prob - y) + (lambda/2) * beta_mat[i,] # the addition is the ridge penalty
     
     # Calculate Hessian value and update beta_mat
-    w <- as.vector(prob*(1 - prob), p)
-    hessian <- crossprod(X, w * X)
-    beta_mat[i + 1, ] = beta_mat[i, ] - solve(hessian,gradient)
+    w <- as.vector(prob*(1 - prob))
+    hessian <- crossprod(X, w * X) + diag(lambda, nrow = p) # the addition is the ridge penalty
+    beta_mat[i + 1, ] = beta_mat[i, ] - eta * solve(hessian,gradient) # eta is a learning rate for dampened newtons method.
     # Update Xb for next round
-    Xb <- X%*%beta_mat[i+1, ]
+    Xb <- X%*%beta_mat[i + 1, ]
     # Update the objective
-    fvec[i] <- sum(-y *Xb + log(1 + Xb))
+    fvec[i + 1] <- sum(-y * Xb + log(1 + exp(Xb)))
   }
   
   # Return the matrix of beta values, as well as the vector of function values across iterations, including the starting point (both have nIter + 1 elements, for x put them in columns)

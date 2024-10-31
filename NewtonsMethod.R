@@ -45,7 +45,7 @@ DampedNewtonsMethod <- function(f, fprime, fdoubleprime, x0, nIter, alpha = 1){
   # Perform Newton's update for nIter iterations
   for (i in 1:nIter){
     # At each iteration, update current value of x and save the new function value
-
+    
   }
   
   # Return the vector of x values, as well as the vector of function values across iterations, including the starting point (both length nIter + 1)

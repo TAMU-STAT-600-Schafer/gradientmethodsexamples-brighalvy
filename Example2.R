@@ -93,8 +93,8 @@ out_Newton3 <- NewtonBinLogistic(X = X, y = y, beta_init = beta_init, nIter = nI
 plot(0:nIter, out_Newton2$fvec, type = 'o', xlab = "Iteration", ylab = "f(beta)", ylim = c(0, 25))
 lines(0:nIter, out_Newton3$fvec, type = 'o', col = "red")
 
-plot(0:nIter, out_Newton2$beta_mat[1, ], type = 'o', xlab = "Iteration", ylab = "beta_1", ylim = c(-25, 25))
-lines(0:nIter, out_Newton3$beta_mat[1, ], type = 'o', col = "red")
+plot(0:nIter, out_Newton2$beta_mat[, 1], type = 'o', xlab = "Iteration", ylab = "beta_1", ylim = c(-25, 25))
+lines(0:nIter, out_Newton3$beta_mat[, 1], type = 'o', col = "red")
 
 
 # New starting points that are further away from the truth, but use damping with eta
@@ -107,9 +107,9 @@ out1 <- NewtonBinLogistic(X = X, y = y, beta_init = beta_init1, nIter = 30, eta 
 out2 <- NewtonBinLogistic(X = X, y = y, beta_init = beta_init2, nIter = 30, eta = 0.1)
 out3 <- NewtonBinLogistic(X = X, y = y, beta_init = beta_init3, nIter = 30, eta = 0.1)
 
-plot(0:nIter, out1$beta_mat[2, ], type = 'o', xlab = "Iteration", ylab = expression(beta_2), ylim = c(-10, 10))
-lines(0:nIter, out2$beta_mat[2, ], type = 'o', col = "red")
-lines(0:nIter, out3$beta_mat[2, ], type = 'o', col = "blue")
+plot(0:nIter, out1$beta_mat[, 2], type = 'o', xlab = "Iteration", ylab = expression(beta_2), ylim = c(-10, 10))
+lines(0:nIter, out2$beta_mat[, 2], type = 'o', col = "red")
+lines(0:nIter, out3$beta_mat[, 2], type = 'o', col = "blue")
 
 
 # Same starting point, use ridge regularization
@@ -118,6 +118,6 @@ out1 <- NewtonBinLogistic(X = X, y = y, beta_init = beta_init1, nIter = 30, eta 
 out2 <- NewtonBinLogistic(X = X, y = y, beta_init = beta_init2, nIter = 30, eta = 0.1, lambda = 1)
 out3 <- NewtonBinLogistic(X = X, y = y, beta_init = beta_init3, nIter = 30, eta = 0.1, lambda = 1)
 
-plot(0:nIter, out1$beta_mat[2, ], type = 'o', xlab = "Iteration", ylab = expression(beta_2), ylim = c(-10, 10))
-lines(0:nIter, out2$beta_mat[2, ], type = 'o', col = "red")
-lines(0:nIter, out3$beta_mat[2, ], type = 'o', col = "blue")
+plot(0:nIter, out1$beta_mat[, 2], type = 'o', xlab = "Iteration", ylab = expression(beta_2), ylim = c(-10, 10))
+lines(0:nIter, out2$beta_mat[, 2], type = 'o', col = "red")
+lines(0:nIter, out3$beta_mat[, 2], type = 'o', col = "blue")
